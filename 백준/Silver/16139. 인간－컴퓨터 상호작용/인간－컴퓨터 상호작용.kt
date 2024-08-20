@@ -6,26 +6,35 @@ import java.util.*
 import kotlin.collections.ArrayDeque
 import kotlin.math.*
 
-//val bw = BufferedWriter(OutputStreamWriter(System.out))
-//val br = BufferedReader(InputStreamReader(System.`in`))
-val state = mutableListOf<Int>()
+val bw = BufferedWriter(OutputStreamWriter(System.out))
+val br = BufferedReader(InputStreamReader(System.`in`))
 
 fun main() {
-    val str = readln().map { it.toString() }
-    repeat(readln().toInt()) {
-        val (a, b, c) = readln().split(" ")
-        val counter = MutableList(str.size) { 0 }
-        if(str[0] == a) counter[0] = 1
-        for(k in 1..str.lastIndex) {
-            counter[k] = if(str[k] == a) counter[k-1] + 1 else counter[k-1]
+    val str = br.readLine()
+    val dp = MutableList(26) { MutableList(str.length) { 0 } }
+
+    dp.forEachIndexed { i, l ->
+        for(j in 0..str.lastIndex) {
+            if(str[j].code == i + 97) {
+                l[j]++
+            }
+            if(j > 0) l[j] += l[j-1]
         }
+    }
+
+    repeat(br.readLine().toInt()) {
+        val (a, b, c) = br.readLine().split(" ")
         val i = b.toInt()
         val j = c.toInt()
-        if(i == 0) println(counter[j])
-        else println(counter[j] - counter[i-1])
+        val code = a.toCharArray().first().code - 97
+        if(dp[code].last() == 0) bufferPrint("0")
+        else if(i == 0) bufferPrint("${dp[code][j]}")
+        else bufferPrint("${dp[code][j] - dp[code][i-1]}")
     }
+    bw.flush()
+    bw.close()
 }
 
-//fun bufferPrint(str: String) {
-//    bw.write("$str\n")
-//}
+fun bufferPrint(str: String) {
+    bw.write("$str\n")
+}
