@@ -27,8 +27,6 @@ fun main() {
 
     val blackCase = getNegativeMap(inputMap.toList(), blackStartMap)
     val whiteCase = getNegativeMap(inputMap.toList(), whiteStartMap)
-//    blackCase.forEach { println(it) }
-//    whiteCase.forEach { println(it) }
     val whiteCaseMin = getMinimum(MutableList(n) { MutableList(m) { 0 } }, blackCase, k)
     val blackCaseMin = getMinimum(MutableList(n) { MutableList(m) { 0 } }, whiteCase, k)
     println(min(whiteCaseMin, blackCaseMin))
@@ -60,9 +58,8 @@ fun setDp(dp: MutableList<MutableList<Int>>, negativeMap: List<List<Int>>) {
 
 fun getMinimum(dp: MutableList<MutableList<Int>>, negativeMap: List<List<Int>>, k: Int): Int {
     setDp(dp, negativeMap)
-//    dp.forEach { println(it) }
-//    println()
     var result = Int.MAX_VALUE
+    
     for (i in 0..negativeMap.lastIndex) {
         for (j in 0..negativeMap.first().lastIndex) {
             val minCol = i - (k - 1)
@@ -73,7 +70,6 @@ fun getMinimum(dp: MutableList<MutableList<Int>>, negativeMap: List<List<Int>>, 
                 val c = if(a > 0 && b > 0) dp[minCol-1][minRow-1] else 0
                 val cost = dp[i][j] - (a + b - c)
                 result = min(cost, result)
-//                println("(i, j) -> $i $j --- $b $a $c ${dp[i][j]} $cost")
             }
         }
     }
