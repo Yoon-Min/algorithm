@@ -20,27 +20,12 @@ fun main() {
     }
     while (true) {
         val bestBlockGroup = getBestBlockGroup(blockMap) ?: break
-
-//        printMap(blockMap)
-
         deleteBlockGroup(blockMap, bestBlockGroup.groupLocationList)
-
-//        printMap(blockMap)
-
         score += bestBlockGroup.totalBlock * bestBlockGroup.totalBlock
         val blockGroupRange = getBlockGroupRange(bestBlockGroup.groupLocationList, n)
         setGravity(blockGroupRange.first, blockGroupRange.second, blockMap)
-
-//        printMap(blockMap)
-
         rotate(blockMap)
-
-//        printMap(blockMap)
-
         setGravity(blockMap.indices, blockMap.indices, blockMap)
-
-//        printMap(blockMap)
-//        println("complete cycle")
     }
     println(score)
 }
@@ -70,21 +55,15 @@ fun getBestBlockGroup(blockMap: MutableList<MutableList<BlockStatus>>): BlockGro
 fun getBlockGroup(standardBlock: BlockStatus, blockMap: MutableList<MutableList<BlockStatus>>): BlockGroup? {
     val nextDestination = listOf(listOf(0, 1), listOf(1, 0), listOf(0, -1), listOf(-1, 0))
     val isVisit = MutableList(blockMap.size) { MutableList(blockMap.size) { false } }
-    val q = ArrayDeque<BlockGroup>()
-    q.add(
-        BlockGroup(
-            groupLocationList = listOf(standardBlock),
-            totalBlock = 1,
-            totalRainbowBlock = if (standardBlock.code == 0) 1 else 0,
-            standardBlock = standardBlock
-        )
-    )
+    val groupBlockList = mutableListOf(standardBlock)
+    var curStandardBlock = standardBlock
+    val q = ArrayDeque<BlockStatus>()
+
+    q.add(standardBlock)
     isVisit[standardBlock.x][standardBlock.y] = true
 
     while (q.isNotEmpty()) {
-        val curGroup = q.removeFirst()
-        val curBlock = curGroup.groupLocationList.last()
-
+        val curBlock = q.removeFirst()
         for (destination in nextDestination) {
             val nextX = curBlock.x + destination[0]
             val nextY = curBlock.y + destination[1]
@@ -94,22 +73,13 @@ fun getBlockGroup(standardBlock: BlockStatus, blockMap: MutableList<MutableList<
             val nextBlock = blockMap[nextX][nextY]
             if (nextBlock.code > -1 && (nextBlock.code == standardBlock.code || nextBlock.code == 0)) {
                 isVisit[nextBlock.x][nextBlock.y] = true
+                groupBlockList.add(nextBlock)
+                if(nextBlock.code > 0 && checkStandardBlock(nextBlock, curStandardBlock)) {
+                    curStandardBlock = nextBlock
+                }
                 q.addLast(
-                    curGroup.copy(
-                        groupLocationList = curGroup.groupLocationList + listOf(nextBlock),
-                        totalBlock = curGroup.totalBlock + 1,
-                        totalRainbowBlock = if (nextBlock.code == 0) curGroup.totalRainbowBlock + 1 else curGroup.totalRainbowBlock
-                    )
+                    nextBlock
                 )
-            }
-        }
-    }
-
-    val groupBlockList = mutableListOf<BlockStatus>()
-    for(x in blockMap.indices) {
-        for(y in blockMap.indices) {
-            if(isVisit[x][y]) {
-                groupBlockList.add(blockMap[x][y])
             }
         }
     }
@@ -118,10 +88,10 @@ fun getBlockGroup(standardBlock: BlockStatus, blockMap: MutableList<MutableList<
         groupLocationList =  groupBlockList,
         totalBlock = groupBlockList.size,
         totalRainbowBlock = groupBlockList.filter { it.code == 0 }.size,
-        standardBlock = groupBlockList.filter { it.code > 0 }.sortedWith(compareBy({it.x}, {it.y})).first()
+        standardBlock = curStandardBlock
     )
 
-    return if(largestGroup.totalBlock < 2) null else largestGroup
+    return if(largestGroup.totalBlock < 2)  null else largestGroup
 }
 
 fun deleteBlockGroup(blockMap: MutableList<MutableList<BlockStatus>>, groupLocationList: List<BlockStatus>) {
@@ -154,7 +124,6 @@ fun setGravity(colRange: IntRange, rowRange: IntRange, blockMap: MutableList<Mut
                     nextColIndex += 1
                 }
             }
-
         }
     }
 }
@@ -172,17 +141,17 @@ fun isValidRange(x: Int, y: Int, validRange: IntRange): Boolean {
     return x in validRange && y in validRange
 }
 
-fun printMap(blockMap: MutableList<MutableList<BlockStatus>>) {
-    blockMap.forEach { blockList ->
-        println(blockList.map { it.code.toString() }.map { if(it == "-2") " " else it})
-    }
-    println()
+fun checkStandardBlock(new: BlockStatus, cur: BlockStatus): Boolean {
+    if(new.x < cur.x) return true
+    if(new.x == cur.x && new.y < cur.y) return true
+    return false
 }
 
 data class BlockStatus(
     val x: Int,
     val y: Int,
     val code: Int,
+    val isGroupMember: Boolean = false
 )
 
 data class BlockGroup(
