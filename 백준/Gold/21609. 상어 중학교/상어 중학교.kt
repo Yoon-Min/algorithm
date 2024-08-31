@@ -34,7 +34,7 @@ fun getBestBlockGroup(blockMap: MutableList<MutableList<BlockStatus>>): BlockGro
     val blockGroups = mutableListOf<BlockGroup>()
     for (x in blockMap.indices) {
         for (y in blockMap.indices) {
-            if (blockMap[x][y].code > 0) {
+            if (blockMap[x][y].code > 0 && !blockMap[x][y].isGroupMember) {
                 getBlockGroup(blockMap[x][y], blockMap)?.let {
                     blockGroups.add(it)
                 }
@@ -49,6 +49,15 @@ fun getBestBlockGroup(blockMap: MutableList<MutableList<BlockStatus>>): BlockGro
             { -1 * it.standardBlock.y }
         )
     )
+
+    for (x in blockMap.indices) {
+        for (y in blockMap.indices) {
+            if (blockMap[x][y].isGroupMember) {
+                blockMap[x][y] = blockMap[x][y].copy(isGroupMember = false)
+            }
+        }
+    }
+
     return if (blockGroups.isEmpty()) null else blockGroups.first()
 }
 
@@ -90,6 +99,12 @@ fun getBlockGroup(standardBlock: BlockStatus, blockMap: MutableList<MutableList<
         totalRainbowBlock = groupBlockList.filter { it.code == 0 }.size,
         standardBlock = curStandardBlock
     )
+
+    largestGroup.groupLocationList.forEach { block ->
+        if(block.code > 0) {
+            blockMap[block.x][block.y] = block.copy(isGroupMember = true)
+        }
+    }
 
     return if(largestGroup.totalBlock < 2)  null else largestGroup
 }
