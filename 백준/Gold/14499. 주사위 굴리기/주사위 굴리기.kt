@@ -37,8 +37,6 @@ fun main() {
             }
             curLoc[0] = nextX
             curLoc[1] = nextY
-//            println(curLoc)
-//            println(curDice)
             println(curDice[DiceDirection.TOP.ordinal])
         }
     }
