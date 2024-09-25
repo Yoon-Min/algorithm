@@ -3,7 +3,7 @@ import kotlin.math.*
 fun main() {
     val n = readln()
     n.forEachIndexed { i, c ->
-        val singleNum = c.code - 48
+        val singleNum = c - '0'
         val numToBinary = when(singleNum) {
             7 -> "111"
             6 -> "110"
