@@ -8,6 +8,7 @@ fun main() {
         board.add(Score(nation, g, s, b))
     }
     board.sortWith(compareBy({it.gold}, {it.silver}, {it.bronze}))
+    board.reverse()
     board[0] = board.first().copy(rank = 1)
     var prev = board.first()
     for(i in 1..board.lastIndex) {
