@@ -17,7 +17,7 @@ fun main() {
             board[i] = cur.copy(rank = prev.rank)
         }
         else {
-            board[i] = cur.copy(rank = prev.rank + 1)
+            board[i] = cur.copy(rank = i+1)
         }
         prev = board[i]
     }
