@@ -12,9 +12,10 @@ fun main() {
         updateTrain(input)
     }
     for(i in 1..n) {
-        val decimalNumber = List(train[i].size) { it -> train[i][it] * 2.0.pow(it-1).toInt() }.sum()
-//        println(train[i].joinToString(""))
-//        println(decimalNumber)
+        var decimalNumber = 0
+        for(j in 1..20) {
+            decimalNumber += train[i][j] * 2.0.pow(j-1).toInt()
+        }
         if(!s.contains(decimalNumber)) {
             counter += 1
             s.add(decimalNumber)
