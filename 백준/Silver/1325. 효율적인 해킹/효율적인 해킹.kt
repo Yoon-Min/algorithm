@@ -2,72 +2,36 @@ import java.util.StringTokenizer
 import kotlin.collections.ArrayDeque
 
 fun main() = with(System.`in`.bufferedReader()) {
-//    val (n,m) = readLine().split(" ").map { it.toInt() }
-//    val result = IntArray(n+1)
-//    val partner = List(n+1) { mutableSetOf<Int>() }.apply {
-//        for(i in 0 until m) {
-//            val st = StringTokenizer(readLine())
-//            this[st.nextToken().toInt()].add(st.nextToken().toInt())
-//        }
-//    }
-//
-//    val isVisited = BooleanArray(n+1)
-//    val q = ArrayDeque<Int>()
-//    for(i in 1..n){
-//        isVisited.fill(false)
-//        isVisited[i] = true
-//        q.add(i)
-//        while(q.isNotEmpty()) {
-//            val cur = q.removeFirst()
-//            for(it in partner[cur]){
-//                if(!isVisited[it]) {
-//                    isVisited[it] = true
-//                    result[it] += 1
-//                    q.add(it)
-//                }
-//            }
-//        }
-//    }
-//    val max = result.max()
-//    val sb = StringBuilder()
-//    for(i in 1..n) {
-//        if(result[i] == max) sb.append("$i ")
-//    }
-//    println(sb.dropLast(1))
-    val (N, M) = readLine().split(" ").map(String::toInt)
-    val next = List(N) { mutableListOf<Int>() }.apply {
-        for (i in 0 until M) {
-            val st = StringTokenizer(readLine())
-            this[st.nextToken().toInt() - 1].add(st.nextToken().toInt() - 1)
-        }
+    val (n,m) = readLine().split(" ").map { it.toInt() }
+    val result = IntArray(n+1)
+    val partner = List(n+1) { mutableListOf<Int>() }
+
+    for(i in 0 until m) {
+        val st = StringTokenizer(readLine())
+        partner[st.nextToken().toInt()].add(st.nextToken().toInt())
     }
 
+    val isVisited = BooleanArray(n+1)
     val q = ArrayDeque<Int>()
-    val answer = IntArray(N)
-    val V = BooleanArray(N) { false }
-    for (i in 0 until N) {
-        V.fill(false)
-        V[i] = true
+    for(i in 1..n){
+        isVisited.fill(false)
+        isVisited[i] = true
         q.add(i)
-        while (q.isNotEmpty()) {
-            val now = q.removeFirst()
-
-            for (nxt in next[now]) {
-                if (V[nxt].not()) {
-                    answer[nxt]++
-                    V[nxt] = true
-                    q.add(nxt)
+        while(q.isNotEmpty()) {
+            val cur = q.removeFirst()
+            for(it in partner[cur]){
+                if(!isVisited[it]) {
+                    isVisited[it] = true
+                    result[it] += 1
+                    q.add(it)
                 }
             }
         }
     }
-
-    val maxVal = answer.maxOf { it }
+    val max = result.max()
     val sb = StringBuilder()
-    for (i in 0 until N) {
-        if (answer[i] == maxVal) {
-            sb.append("${i + 1} ")
-        }
+    for(i in 1..n) {
+        if(result[i] == max) sb.append("$i ")
     }
-    print(sb.dropLast(1))
+    println(sb)
 }
