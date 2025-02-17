@@ -4,14 +4,13 @@ import kotlin.collections.ArrayDeque
 fun main() = with(System.`in`.bufferedReader()) {
 //    val (n,m) = readLine().split(" ").map { it.toInt() }
 //    val result = IntArray(n+1)
-//    val partner = List(n+1) { mutableSetOf<Int>() }
-//
-//    repeat(m) {
-//        val st = StringTokenizer(readLine())
-//        val a = st.nextToken().toInt()
-//        val b = st.nextToken().toInt()
-//        partner[a].add(b)
+//    val partner = List(n+1) { mutableSetOf<Int>() }.apply {
+//        for(i in 0 until m) {
+//            val st = StringTokenizer(readLine())
+//            this[st.nextToken().toInt()].add(st.nextToken().toInt())
+//        }
 //    }
+//
 //    val isVisited = BooleanArray(n+1)
 //    val q = ArrayDeque<Int>()
 //    for(i in 1..n){
@@ -20,7 +19,7 @@ fun main() = with(System.`in`.bufferedReader()) {
 //        q.add(i)
 //        while(q.isNotEmpty()) {
 //            val cur = q.removeFirst()
-//            partner[cur].forEach {
+//            for(it in partner[cur]){
 //                if(!isVisited[it]) {
 //                    isVisited[it] = true
 //                    result[it] += 1
@@ -32,9 +31,9 @@ fun main() = with(System.`in`.bufferedReader()) {
 //    val max = result.max()
 //    val sb = StringBuilder()
 //    for(i in 1..n) {
-//        if(result[i] == max) sb.append(i).append(" ")
+//        if(result[i] == max) sb.append("$i ")
 //    }
-//    println(sb)
+//    println(sb.dropLast(1))
     val (N, M) = readLine().split(" ").map(String::toInt)
     val next = List(N) { mutableListOf<Int>() }.apply {
         for (i in 0 until M) {
