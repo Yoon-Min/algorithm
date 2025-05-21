@@ -1,3 +1,4 @@
+import java.util.PriorityQueue
 import kotlin.math.*
 
 val dVector = listOf(Pair(0,1), Pair(1,0), Pair(-1,0), Pair(0,-1))
@@ -14,10 +15,14 @@ fun main() = with(System.`in`.bufferedReader()) {
         val map = List(n) { readLine().split(" ").map { it.toInt() } }
         val money = List(n) { MutableList(n) { Int.MAX_VALUE } }.also { it[0][0] = map[0][0] }
 
-        val q = ArrayDeque<Triple<Int,Int,Int>>().also { it.add(Triple(0,0,map[0][0])) }
-        while(q.isNotEmpty()) {
-            val cur = q.removeFirst()
+        val pq = PriorityQueue<Triple<Int,Int,Int>>(compareBy { it.third }).also { it.offer(Triple(0,0,map[0][0]))}
+        while(pq.isNotEmpty()) {
+            val cur = pq.poll()
             val curMoney = cur.third
+
+            if(cur.first == n-1 && cur.second == n-1) {
+                break
+            }
 
             dVector.forEach { v ->
                 val nx = v.second + cur.second
@@ -26,7 +31,7 @@ fun main() = with(System.`in`.bufferedReader()) {
                 if(nx in 0 until n && ny in 0 until n) {
                     if(curMoney + map[ny][nx] < money[ny][nx]) {
                         money[ny][nx] = curMoney + map[ny][nx]
-                        q.add(Triple(ny,nx,money[ny][nx]))
+                        pq.offer(Triple(ny,nx,money[ny][nx]))
                     }
                 }
             }
